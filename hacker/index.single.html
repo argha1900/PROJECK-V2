@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HACK//OPS (Single File)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #06110b;
+  --bg-2: #0a1c14;
+  --fg: #d5ffe9;
+  --muted: #7fd1b9;
+  --green: #00ff9c;
+  --green-dim: #00c777;
+  --cyan: #00e5ff;
+  --magenta: #ff43d1;
+  --red: #ff3b3b;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: var(--fg);
+  background: radial-gradient(1200px 600px at 20% 10%, #0b221a, var(--bg)) fixed;
+  font-family: 'Share Tech Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.3px;
+}
+
+#matrix {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: transparent;
+}
+
+.ui {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 22px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  user-select: none;
+}
+
+.glitch {
+  position: relative;
+  display: inline-block;
+  font-size: clamp(28px, 6vw, 64px);
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(0,255,156,0.6), 0 0 42px rgba(0,255,156,0.25);
+  letter-spacing: 3px;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.glitch::before {
+  color: var(--cyan);
+  transform: translate(2px, 0);
+  mix-blend-mode: screen;
+  animation: glitchSlice 2.2s infinite linear alternate-reverse;
+}
+.glitch::after {
+  color: var(--magenta);
+  transform: translate(-2px, 0);
+  mix-blend-mode: screen;
+  animation: glitchSlice 2.4s infinite linear alternate-reverse;
+}
+@keyframes glitchSlice {
+  0% { clip-path: inset(0 0 85% 0); }
+  10% { clip-path: inset(15% 0 60% 0); }
+  20% { clip-path: inset(35% 0 40% 0); }
+  30% { clip-path: inset(50% 0 25% 0); }
+  40% { clip-path: inset(65% 0 10% 0); }
+  50% { clip-path: inset(0 0 85% 0); }
+  60% { clip-path: inset(10% 0 65% 0); }
+  70% { clip-path: inset(30% 0 45% 0); }
+  80% { clip-path: inset(55% 0 20% 0); }
+  90% { clip-path: inset(70% 0 5% 0); }
+  100% { clip-path: inset(0 0 85% 0); }
+}
+
+.status-led {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #baffea, var(--green));
+  box-shadow: 0 0 10px rgba(0,255,156,0.9), 0 0 24px rgba(0,255,156,0.4);
+  animation: ledPulse 1.6s infinite ease-in-out;
+}
+@keyframes ledPulse {
+  0%, 100% { filter: brightness(1); opacity: 0.85; }
+  50% { filter: brightness(1.3); opacity: 1; }
+}
+
+.widgets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.card {
+  background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15));
+  border: 1px solid rgba(0,255,156,0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 0 0 1px rgba(0,255,156,0.08) inset, 0 0 40px rgba(0,255,156,0.05);
+  backdrop-filter: blur(2px) saturate(120%);
+}
+.card-title {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.card-value {
+  font-size: 22px;
+  color: var(--fg);
+  text-shadow: 0 0 10px rgba(0,255,156,0.3);
+}
+
+.terminal {
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25));
+  border: 1px solid rgba(0,255,156,0.3);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 0 0 1px rgba(0,255,156,0.08) inset, 0 0 80px rgba(0,255,156,0.07);
+}
+.output {
+  width: 100%;
+  min-height: 240px;
+  max-height: 42vh;
+  overflow: auto;
+  padding: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.output .line { color: var(--fg); }
+.output .line .ts { color: var(--muted); margin-right: 8px; }
+.output .ok { color: var(--green); }
+.output .warn { color: var(--cyan); }
+.output .err { color: var(--red); }
+
+.prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.prompt { color: var(--muted); opacity: 0.9; }
+#terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font: inherit;
+  padding: 8px 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0,255,156,0.25) inset, 0 0 24px rgba(0,255,156,0.08) inset;
+  caret-color: var(--green);
+}
+#terminal-input:focus {
+  box-shadow: 0 0 0 1px rgba(0,255,156,0.45) inset, 0 0 14px rgba(0,255,156,0.25) inset;
+}
+
+.controls { display: flex; gap: 8px; margin-top: 10px; }
+.btn {
+  appearance: none;
+  background: linear-gradient(180deg, rgba(0,255,156,0.25), rgba(0,255,156,0.12));
+  border: 1px solid rgba(0,255,156,0.4);
+  color: var(--fg);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-shadow: 0 0 10px rgba(0,255,156,0.4);
+  transition: transform 0.06s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+.btn:hover { filter: brightness(1.1); box-shadow: 0 0 18px rgba(0,255,156,0.25); }
+.btn:active { transform: translateY(1px) scale(0.99); }
+.btn-ghost { background: transparent; border-color: rgba(0,255,156,0.25); }
+
+.progress {
+  position: relative;
+  height: 14px;
+  margin-top: 12px;
+  border: 1px solid rgba(0,255,156,0.4);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(0,255,156,0.08), rgba(0,255,156,0.02));
+  overflow: hidden;
+}
+.progress .bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, #00ff9c, #00e5ff);
+  box-shadow: 0 0 18px rgba(0,255,156,0.6), 0 0 28px rgba(0,229,255,0.35);
+  animation: stripes 1.2s linear infinite;
+}
+.progress .label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  color: #00140c;
+  text-shadow: 0 0 10px rgba(0,255,156,0.7);
+}
+@keyframes stripes {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(24deg); }
+}
+.hidden { display: none; }
+
+.footer {
+  color: var(--muted);
+  opacity: 0.85;
+  font-size: 12px;
+}
+
+.overlay { position: fixed; inset: 0; pointer-events: none; }
+.overlay-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.12) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    rgba(0, 0, 0, 0.0) 2px
+  );
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+.overlay-vignette {
+  background: radial-gradient(80% 80% at 50% 30%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.55) 100%);
+}
+
+@media (max-width: 860px) {
+  .widgets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .widgets { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="ui">
+    <header class="brand">
+      <span class="glitch" data-text="HACK//OPS">HACK//OPS</span>
+      <span class="status-led" id="status-led" aria-label="status"></span>
+    </header>
+
+    <section class="widgets" aria-label="holo-widgets">
+      <div class="card">
+        <div class="card-title">CPU LOAD</div>
+        <div class="card-value" id="stat-cpu">37%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">PKTS/sec</div>
+        <div class="card-value" id="stat-pkts">1,204</div>
+      </div>
+      <div class="card">
+        <div class="card-title">ENTROPY</div>
+        <div class="card-value" id="stat-entropy">7.1e3</div>
+      </div>
+      <div class="card">
+        <div class="card-title">NODES</div>
+        <div class="card-value" id="stat-nodes">256</div>
+      </div>
+    </section>
+
+    <section class="terminal" aria-label="terminal">
+      <div id="terminal-output" class="output" aria-live="polite"></div>
+      <div class="prompt-row">
+        <span class="prompt">guest@node:~$</span>
+        <input id="terminal-input" type="text" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="terminal input" placeholder="ketik 'help' lalu Enter" />
+      </div>
+      <div class="controls">
+        <button id="btn-scan" class="btn">Run Scan</button>
+        <button id="btn-decrypt" class="btn">Decrypt</button>
+        <button id="btn-clear" class="btn btn-ghost">Clear</button>
+      </div>
+      <div class="progress hidden" id="progress" aria-hidden="true">
+        <div class="bar" id="progress-bar"></div>
+        <span class="label" id="progress-label">0%</span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Commands: help, scan, decrypt, clear, whoami, trace, banner
+    </footer>
+  </div>
+
+  <div class="overlay overlay-scanlines"></div>
+  <div class="overlay overlay-vignette"></div>
+
+  <script>
+(() => {
+  const $ = (sel) => document.querySelector(sel);
+  const outputEl = $('#terminal-output');
+  const inputEl = $('#terminal-input');
+  const progressEl = $('#progress');
+  const progressBarEl = $('#progress-bar');
+  const progressLabelEl = $('#progress-label');
+  const btnScan = $('#btn-scan');
+  const btnDecrypt = $('#btn-decrypt');
+  const btnClear = $('#btn-clear');
+
+  const statCpu = $('#stat-cpu');
+  const statPkts = $('#stat-pkts');
+  const statEntropy = $('#stat-entropy');
+  const statNodes = $('#stat-nodes');
+  const statusLed = $('#status-led');
+
+  let busy = false;
+
+  function nowTs() {
+    const d = new Date();
+    return d.toLocaleTimeString('id-ID', { hour12: false });
+  }
+
+  function scrollOutputToBottom() {
+    outputEl.scrollTop = outputEl.scrollHeight;
+  }
+
+  function printLine(text, cls = '') {
+    const line = document.createElement('div');
+    line.className = `line ${cls}`.trim();
+    const ts = document.createElement('span');
+    ts.className = 'ts';
+    ts.textContent = `[${nowTs()}]`;
+    const content = document.createElement('span');
+    content.textContent = ` ${text}`;
+    line.appendChild(ts);
+    line.appendChild(content);
+    outputEl.appendChild(line);
+    const max = 600;
+    while (outputEl.children.length > max) outputEl.removeChild(outputEl.firstChild);
+    scrollOutputToBottom();
+  }
+
+  function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randomHex(len) {
+    const chars = '0123456789abcdef';
+    let s = '';
+    for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    return s;
+  }
+
+  function typeOut(text, speed = 6, cls = '') {
+    return new Promise((resolve) => {
+      const buffer = document.createElement('div');
+      buffer.className = `line ${cls}`.trim();
+      const ts = document.createElement('span');
+      ts.className = 'ts';
+      ts.textContent = `[${nowTs()}]`;
+      const content = document.createElement('span');
+      buffer.appendChild(ts);
+      buffer.appendChild(content);
+      outputEl.appendChild(buffer);
+      let i = 0;
+      const iv = setInterval(() => {
+        content.textContent = ' ' + text.slice(0, ++i);
+        scrollOutputToBottom();
+        if (i >= text.length) { clearInterval(iv); resolve(); }
+      }, speed);
+    });
+  }
+
+  let audioCtx;
+  function initAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+  }
+  function beep(freq = 880, dur = 0.03, vol = 0.02) {
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = freq;
+    gain.gain.value = vol;
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => { osc.stop(); }, dur * 1000);
+  }
+
+  const commands = {
+    help() {
+      printLine('Available: help, scan, decrypt, clear, whoami, trace, banner');
+    },
+    clear() {
+      outputEl.innerHTML = '';
+    },
+    whoami() {
+      const users = ['guest', 'root', 'operator', 'ghost'];
+      const host = ['node-α', 'node-β', 'matrix', 'blackice'];
+      printLine(`${randomItem(users)}@${randomItem(host)} (${randomInt(1000, 9999)})`, 'ok');
+    },
+    trace() {
+      const ip = `${randomInt(10, 255)}.${randomInt(0, 255)}.${randomInt(0, 255)}.${randomInt(1, 254)}`;
+      const cities = ['Tokyo', 'Reykjavík', 'Berlin', 'Jakarta', 'Seoul', 'Singapore', 'Helsinki'];
+      printLine(`tracing route to ${ip} via ${randomItem(cities)} ...`);
+      for (let i = 1; i <= randomInt(5, 10); i++) {
+        setTimeout(() => {
+          printLine(`${i}  ${randomInt(1, 99)}ms  ${randomInt(1, 99)}ms  ${randomInt(1, 99)}ms  ${ip}`);
+          beep(220 + i * 20, 0.02, 0.01);
+        }, i * 140);
+      }
+    },
+    async banner() {
+      const art = [
+        '██╗  ██╗ █████╗  ██████╗██╗  ██╗//',
+        '██║  ██║██╔══██╗██╔════╝██║ ██╔╝//',
+        '███████║███████║██║     █████╔╝ //',
+        '██╔══██║██╔══██║██║     ██╔═██╗ //',
+        '██║  ██║██║  ██║╚██████╗██║  ██╗//',
+        '╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝//'
+      ];
+      for (const line of art) { await typeOut(line, 2, 'ok'); }
+    },
+    async scan() { await runScan(); },
+    async decrypt() { await runDecrypt(); },
+  };
+
+  function parse(cmd) {
+    const c = (cmd || '').trim().toLowerCase();
+    if (!c) return;
+    if (commands[c]) return commands[c]();
+    printLine(`unknown command: ${cmd}`, 'err');
+  }
+
+  async function runScan() {
+    if (busy) { printLine('system busy. wait...', 'warn'); return; }
+    busy = true;
+    toggleProgress(true, 'SCANNING');
+    printLine('Initializing network scan...', 'warn');
+    await sleep(250);
+    const base = `192.168.${randomInt(0, 254)}.${randomInt(0, 10)}`;
+    printLine(`Target subnet: ${base}/24`);
+
+    const ports = [22, 53, 80, 88, 110, 123, 139, 143, 389, 443, 445, 587, 6379, 8080, 9000];
+    const services = {
+      22: 'ssh', 53: 'dns', 80: 'http', 88: 'kerberos', 110: 'pop3', 123: 'ntp', 139: 'netbios', 143: 'imap', 389: 'ldap', 443: 'https', 445: 'smb', 587: 'smtp', 6379: 'redis', 8080: 'http-proxy', 9000: 'svc'
+    };
+
+    let progress = 0;
+    const progIv = setInterval(() => {
+      progress = Math.min(100, progress + randomInt(1, 4));
+      setProgress(progress, `SCANNING ${progress}%`);
+      if (Math.random() < 0.2) statusBlink();
+      if (progress >= 100) {
+        clearInterval(progIv);
+        finish();
+      }
+    }, 80);
+
+    const hostIv = setInterval(() => {
+      const host = `192.168.${randomInt(0, 254)}.${randomInt(1, 254)}`;
+      const p = randomItem(ports);
+      printLine(`${host} open port ${p}/${services[p]} (ttl=${randomInt(40, 128)})`, 'ok');
+      beep(280 + Math.random() * 80, 0.02, 0.012);
+    }, 140);
+
+    function finish() {
+      clearInterval(hostIv);
+      setTimeout(() => {
+        printLine('Scan complete. Hosts up: ' + randomInt(3, 17) + ' | open ports: ' + randomInt(10, 80), 'ok');
+        toggleProgress(false);
+        busy = false;
+      }, 350);
+    }
+  }
+
+  async function runDecrypt() {
+    if (busy) { printLine('system busy. wait...', 'warn'); return; }
+    busy = true;
+    toggleProgress(true, 'DECRYPT');
+    printLine('Preparing keyspace reduction (AES-256)...', 'warn');
+    await sleep(250);
+
+    let progress = 0;
+    const steps = [
+      'Collecting entropy...',
+      'S-box analysis...',
+      'Key schedule probing...',
+      'Differential cryptanalysis...',
+      'GPU kernels compiling...',
+      'Bruteforce underway...'
+    ];
+    for (const step of steps) {
+      await typeOut(step, 8);
+      await sleep(200);
+    }
+
+    const iv = setInterval(() => {
+      progress = Math.min(100, progress + randomInt(1, 3));
+      setProgress(progress, `DECRYPT ${progress}%`);
+      if (Math.random() < 0.25) beep(520 + Math.random() * 120, 0.01, 0.01);
+      if (progress >= 100) {
+        clearInterval(iv);
+        setTimeout(() => {
+          printLine('Decryption complete. Session unlocked.', 'ok');
+          printLine('Key: 0x' + randomHex(64));
+          toggleProgress(false);
+          busy = false;
+        }, 400);
+      }
+    }, 90);
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function toggleProgress(show, label = 'WORKING') {
+    progressEl.classList.toggle('hidden', !show);
+    progressEl.setAttribute('aria-hidden', String(!show));
+    setProgress(0, label + ' 0%');
+  }
+  function setProgress(pct, label) {
+    progressBarEl.style.width = `${pct}%`;
+    progressLabelEl.textContent = label || `${pct}%`;
+  }
+
+  function statusBlink() {
+    statusLed.style.filter = 'brightness(1.8)';
+    setTimeout(() => statusLed.style.filter = '', 120);
+  }
+
+  function startStats() {
+    setInterval(() => {
+      statCpu.textContent = `${randomInt(31, 98)}%`;
+      statPkts.textContent = `${randomInt(800, 4200).toLocaleString('id-ID')}`;
+      statEntropy.textContent = `${(Math.random() * 1e4 + 1e3).toExponential(1)}`;
+      statNodes.textContent = `${randomInt(64, 1024)}`;
+      statusBlink();
+    }, 900);
+  }
+
+  function startMatrix() {
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    let width, height, columns, drops, fontSize;
+    const chars = 'アイウエオカキクケコｱｲｳｴｵ01░▒▓█<>#/*\\=+-';
+
+    function resize() {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      fontSize = Math.max(14, Math.floor(width / 80));
+      columns = Math.floor(width / fontSize);
+      drops = new Array(columns).fill(0).map(() => randomInt(0, height));
+      ctx.font = `${fontSize}px 'Share Tech Mono', monospace`;
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, width, height);
+      for (let i = 0; i < columns; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillStyle = Math.random() > 0.975 ? '#00e5ff' : '#00ff9c';
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    draw();
+    window.addEventListener('resize', resize);
+  }
+
+  function onEnter(e) {
+    if (e.key === 'Enter') {
+      const cmd = inputEl.value;
+      printLine(`$ ${cmd}`, 'warn');
+      inputEl.value = '';
+      parse(cmd);
+      beep(640, 0.02, 0.008);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initAudio();
+    startMatrix();
+    startStats();
+    inputEl.focus();
+    printLine('Welcome to HACK//OPS terminal. Type `help` and press Enter.', 'ok');
+  }, { once: true });
+
+  window.addEventListener('click', initAudio, { once: true });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Enter') initAudio(); });
+
+  inputEl.addEventListener('keydown', onEnter);
+  btnClear.addEventListener('click', () => commands.clear());
+  btnScan.addEventListener('click', () => commands.scan());
+  btnDecrypt.addEventListener('click', () => commands.decrypt());
+})();
+  </script>
+</body>
+</html>
