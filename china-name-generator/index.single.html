@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>China Name Generator (Single File)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0d0a07;
+  --bg-soft: #1a1310;
+  --red: #d7263d;
+  --red-2: #b01427;
+  --gold: #ffd166;
+  --gold-2: #f5c34a;
+  --text: #f9f9f7;
+  --muted: #d6c9b6;
+  --shadow: rgba(0,0,0,0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(1000px 600px at 70% 0%, #1a1310, #0d0a07) fixed;
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
+.page { max-width: 980px; margin: 0 auto; padding: 24px 18px 40px; }
+
+.header .brand { display: flex; align-items: center; gap: 14px; }
+.logo {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(160deg, var(--red), var(--red-2));
+  color: var(--gold);
+  font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 24px;
+  box-shadow: 0 10px 24px var(--shadow);
+}
+.titles h1 { margin: 0; font-size: 24px; letter-spacing: 0.4px; }
+.titles .tag { margin: 4px 0 0 0; color: var(--muted); font-size: 13px; }
+
+.content { display: grid; grid-template-columns: 360px 1fr; gap: 18px; align-items: start; }
+
+.panel {
+  background: linear-gradient(180deg, rgba(255,209,102,0.08), rgba(255,209,102,0.02));
+  border: 1px solid rgba(255,209,102,0.22);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(255,209,102,0.12) inset, 0 22px 60px rgba(0,0,0,0.25);
+}
+.controls { padding: 16px; display: grid; gap: 12px; }
+.field { display: grid; gap: 6px; }
+.field span { font-size: 13px; color: var(--muted); }
+.field input, .field select {
+  appearance: none; width: 100%;
+  background: var(--bg-soft);
+  color: var(--text);
+  border: 1px solid rgba(255,209,102,0.24);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.field input:focus, .field select:focus {
+  border-color: rgba(255,209,102,0.5);
+  box-shadow: 0 0 0 4px rgba(255,209,102,0.15);
+}
+.actions { display: flex; gap: 10px; }
+.btn {
+  appearance: none; cursor: pointer;
+  background: var(--bg-soft);
+  color: var(--text);
+  border: 1px solid rgba(255,209,102,0.24);
+  padding: 10px 12px; border-radius: 10px;
+  transition: transform .05s ease, filter .2s ease, box-shadow .2s ease;
+}
+.btn:hover { filter: brightness(1.05); box-shadow: 0 10px 26px rgba(0,0,0,0.25); }
+.btn:active { transform: translateY(1px) scale(0.99); }
+.btn.primary { background: linear-gradient(160deg, var(--red), var(--red-2)); border-color: transparent; }
+.btn.ghost { background: transparent; }
+.btn.small { font-size: 12px; padding: 6px 10px; }
+
+.hint { margin: 4px 2px 0; color: var(--muted); font-size: 12px; }
+
+.result { padding: 16px; display: grid; gap: 12px; }
+.result-cn {
+  font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: clamp(28px, 7vw, 64px);
+  color: var(--gold);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 8px 32px rgba(255,209,102,0.35);
+}
+.result-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sub-item { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,209,102,0.18); border-radius: 12px; padding: 10px 12px; }
+.sub-item .label { color: var(--muted); font-size: 12px; }
+.sub-item .value { margin-top: 6px; font-size: 16px; }
+
+.meaning { color: var(--muted); font-size: 13px; }
+.names-detail { font-size: 12px; color: var(--muted); }
+.copy-row { display: flex; gap: 8px; }
+.disclaimer { margin-top: 4px; color: var(--muted); font-size: 11px; }
+
+.footer { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(20px);
+  padding: 8px 12px; border-radius: 999px; background: rgba(0,0,0,0.8); color: var(--text);
+  border: 1px solid rgba(255,209,102,0.24);
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 860px) {
+  .content { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">漢</div>
+        <div class="titles">
+          <h1>China Name Generator</h1>
+          <p class="tag">Buat nama bergaya Tionghoa: marga, nama, pinyin, alias.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="panel controls" aria-label="generator">
+        <label class="field">
+          <span>Nama asli</span>
+          <input id="input-name" type="text" placeholder="mis. Argha" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>Gaya</span>
+          <select id="select-style">
+            <option value="neutral">Netral</option>
+            <option value="masculine">Maskulin</option>
+            <option value="feminine">Feminim</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button id="btn-generate" class="btn primary">Generate</button>
+          <button id="btn-random" class="btn">Random</button>
+        </div>
+        <p class="hint">Contoh: masukkan "Argha" lalu klik Generate.</p>
+      </section>
+
+      <section class="panel result" aria-label="hasil">
+        <div class="result-cn" id="result-cn">——</div>
+        <div class="result-sub">
+          <div class="sub-item">
+            <div class="label">Pinyin</div>
+            <div class="value" id="result-pinyin">——</div>
+            <button class="btn ghost small" id="btn-copy-pinyin">Salin</button>
+          </div>
+          <div class="sub-item">
+            <div class="label">Alias (gaya "Leo Jhing")</div>
+            <div class="value" id="result-alias">——</div>
+            <button class="btn ghost small" id="btn-copy-alias">Salin</button>
+          </div>
+        </div>
+        <div class="meaning" id="result-meaning">Arti: ——</div>
+        <div class="names-detail" id="result-detail"></div>
+        <div class="copy-row">
+          <button class="btn" id="btn-copy-cn">Salin Nama 汉字</button>
+        </div>
+        <p class="disclaimer">Hasil ini bersifat hiburan. Untuk nama resmi, konsultasikan dengan penutur asli/ahli onomastik.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Tip: Anda dapat memilih gaya Netral/Maskulin/Feminim.</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Tersalin</div>
+
+  <script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+
+  const inputName = $('#input-name');
+  const selectStyle = $('#select-style');
+  const btnGenerate = $('#btn-generate');
+  const btnRandom = $('#btn-random');
+  const btnCopyCn = $('#btn-copy-cn');
+  const btnCopyPinyin = $('#btn-copy-pinyin');
+  const btnCopyAlias = $('#btn-copy-alias');
+
+  const resultCn = $('#result-cn');
+  const resultPinyin = $('#result-pinyin');
+  const resultAlias = $('#result-alias');
+  const resultMeaning = $('#result-meaning');
+  const resultDetail = $('#result-detail');
+  const toast = $('#toast');
+
+  const surnames = [
+    { han: '李', pinyin: 'Li', meaning: 'plum' },
+    { han: '王', pinyin: 'Wang', meaning: 'raja' },
+    { han: '张', pinyin: 'Zhang', meaning: 'busur' },
+    { han: '刘', pinyin: 'Liu', meaning: 'membunuh' },
+    { han: '陈', pinyin: 'Chen', meaning: 'memperlihatkan' },
+    { han: '杨', pinyin: 'Yang', meaning: 'poplar' },
+    { han: '黄', pinyin: 'Huang', meaning: 'kuning' },
+    { han: '赵', pinyin: 'Zhao', meaning: 'nama dinasti' },
+    { han: '周', pinyin: 'Zhou', meaning: 'lingkar, minggu' },
+    { han: '吴', pinyin: 'Wu', meaning: 'nama wilayah' },
+    { han: '孙', pinyin: 'Sun', meaning: 'cucu' },
+    { han: '朱', pinyin: 'Zhu', meaning: 'merah cinnabar' },
+    { han: '高', pinyin: 'Gao', meaning: 'tinggi' },
+    { han: '胡', pinyin: 'Hu', meaning: 'barbar (kun.)' },
+    { han: '马', pinyin: 'Ma', meaning: 'kuda' },
+  ];
+
+  const givenSyllables = {
+    neutral: [
+      { han: '明', py: 'Ming', mean: 'terang' },
+      { han: '宇', py: 'Yu', mean: 'alam semesta' },
+      { han: '轩', py: 'Xuan', mean: 'kudaputih/kereta' },
+      { han: '晨', py: 'Chen', mean: 'fajar' },
+      { han: '一', py: 'Yi', mean: 'satu' },
+      { han: '安', py: 'An', mean: 'damai' },
+      { han: '宁', py: 'Ning', mean: 'tentram' },
+      { han: '泽', py: 'Ze', mean: 'rahmat' },
+      { han: '若', py: 'Ruo', mean: 'seperti' },
+      { han: '希', py: 'Xi', mean: 'harapan' },
+      { han: '辰', py: 'Chen', mean: 'bintang/waktu' },
+      { han: '然', py: 'Ran', mean: 'sebagaimana' },
+    ],
+    masculine: [
+      { han: '强', py: 'Qiang', mean: 'kuat' },
+      { han: '伟', py: 'Wei', mean: 'agung' },
+      { han: '龙', py: 'Long', mean: 'naga' },
+      { han: '军', py: 'Jun', mean: 'militer' },
+      { han: '峰', py: 'Feng', mean: 'puncak' },
+      { han: '志', py: 'Zhi', mean: 'tekad' },
+      { han: '毅', py: 'Yi', mean: 'teguh' },
+      { han: '浩', py: 'Hao', mean: 'luas' },
+    ],
+    feminine: [
+      { han: '月', py: 'Yue', mean: 'bulan' },
+      { han: '雪', py: 'Xue', mean: 'salju' },
+      { han: '芳', py: 'Fang', mean: 'wangi' },
+      { han: '静', py: 'Jing', mean: 'tenang' },
+      { han: '玲', py: 'Ling', mean: 'gemerincing' },
+      { han: '美', py: 'Mei', mean: 'cantik' },
+      { han: '霞', py: 'Xia', mean: 'mega' },
+      { han: '莹', py: 'Ying', mean: 'berkilau' },
+    ],
+  };
+
+  function pick(array) { return array[Math.floor(Math.random() * array.length)]; }
+
+  function hashString(s) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function rngFromString(s) { return mulberry32(hashString(String(s))); }
+  function pickR(array, rng) { return array[Math.floor(rng() * array.length)]; }
+
+  function toAliasWestern(pinyinFull, rng) {
+    const parts = pinyinFull.split(' ').slice(-2);
+    if (parts.length === 0) return '—';
+    const first = parts[0] || '';
+    const second = parts[1] || '';
+    const aliasCore = blendAlias(first, second, rng);
+    const western = ['Leo', 'Neo', 'Rio', 'Lio'];
+    const withPrefix = (rng && rng() < 0.45) ? `${pickR(western, rng)} ${aliasCore}` : aliasCore;
+    return withPrefix;
+  }
+
+  function blendAlias(a, b, rng) {
+    if (!a && !b) return '—';
+    if (!b) return stylize(simplifySyllable(a, rng));
+    if (!a) return stylize(simplifySyllable(b, rng));
+    const aSimple = simplifySyllable(a, rng);
+    const bSimple = simplifySyllable(b, rng);
+    const joiner = (rng && rng() < 0.5) ? ' ' : '';
+    return stylize(aSimple + joiner + bSimple);
+  }
+
+  function simplifySyllable(s, rng) {
+    const map = [
+      [/zh/gi, 'j'], [/ch/gi, 'c'], [/sh/gi, 'sh'], [/x/gi, 'x'], [/q/gi, 'q'], [/ang/gi, 'ang'], [/eng/gi, 'eng'], [/ing/gi, 'ing'],
+      [/ong/gi, 'ong'], [/ian/gi, 'ian'], [/uan/gi, 'uan'], [/iang/gi, 'iang'], [/uang/gi, 'uang'], [/uo/gi, 'uo']
+    ];
+    let r = s;
+    for (const [re, rep] of map) r = r.replace(re, rep);
+    if (rng && /^jing$/i.test(r) && rng() < 0.6) {
+      r = r.replace(/^([Jj])(ing)$/i, (_, j, rest) => j + 'h' + rest);
+    }
+    return r;
+  }
+
+  function stylize(s) { return s.replace(/\b(\w)(\w*)/g, (_, a, b) => a.toUpperCase() + b.toLowerCase()); }
+
+  function buildMeaning(surname, g1, g2) {
+    const parts = [surname.meaning, g1.mean, g2.mean].filter(Boolean);
+    return 'Arti: ' + parts.join(' · ');
+  }
+
+  function generateFromInput(baseName, style) {
+    const seed = (baseName || '').trim() || 'seed';
+    const rng = rngFromString(seed + '|' + style);
+    const surname = pickR(surnames, rng);
+    const pool = givenSyllables[style] || givenSyllables.neutral;
+
+    const given1 = pickR(pool, rng);
+    let given2 = pickR(pool, rng);
+    if (given2.han === given1.han) {
+      for (let i = 0; i < 3 && given2.han === given1.han; i++) given2 = pickR(pool, rng);
+    }
+
+    const han = surname.han + given1.han + given2.han;
+    const pinyin = surname.pinyin + ' ' + given1.py + ' ' + given2.py;
+    const alias = toAliasWestern(pinyin, rng);
+
+    const meaning = buildMeaning(surname, given1, given2);
+
+    return {
+      han,
+      pinyin,
+      alias,
+      meaning,
+      detail: `${surname.han}(${surname.pinyin}) · ${given1.han}(${given1.py}) · ${given2.han}(${given2.py})`
+    };
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Tersalin');
+    } catch (e) {
+      console.warn('Clipboard write failed', e);
+      showToast('Gagal menyalin');
+    }
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1400);
+  }
+
+  function loadPrefs() {
+    const style = localStorage.getItem('cn_style');
+    if (style) selectStyle.value = style;
+  }
+  function savePrefs() { localStorage.setItem('cn_style', selectStyle.value); }
+
+  function bind() {
+    btnGenerate.addEventListener('click', () => doGenerate());
+    btnRandom.addEventListener('click', () => doGenerate(true));
+    inputName.addEventListener('keydown', (e) => { if (e.key === 'Enter') doGenerate(); });
+    selectStyle.addEventListener('change', () => { savePrefs(); doGenerate(); });
+
+    btnCopyCn.addEventListener('click', () => copyText(resultCn.textContent.trim()));
+    btnCopyPinyin.addEventListener('click', () => copyText(resultPinyin.textContent.trim()));
+    btnCopyAlias.addEventListener('click', () => copyText(resultAlias.textContent.trim()));
+  }
+
+  function doGenerate(randomize = false) {
+    const name = randomize ? randomSeed() : inputName.value;
+    const style = selectStyle.value;
+    const out = generateFromInput(name, style);
+    render(out);
+  }
+
+  function randomSeed() {
+    const seeds = ['Argha', 'Bima', 'Citra', 'Dewi', 'Fajar', 'Gilang', 'Indra', 'Johan', 'Kirana', 'Laras'];
+    return pick(seeds);
+  }
+
+  function render(out) {
+    resultCn.textContent = out.han;
+    resultPinyin.textContent = out.pinyin;
+    resultAlias.textContent = out.alias;
+    resultMeaning.textContent = out.meaning;
+    resultDetail.textContent = out.detail;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPrefs();
+    bind();
+    doGenerate(true);
+  }, { once: true });
+})();
+  </script>
+</body>
+</html>

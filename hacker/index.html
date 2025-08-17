@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HACK//OPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="ui">
+    <header class="brand">
+      <span class="glitch" data-text="HACK//OPS">HACK//OPS</span>
+      <span class="status-led" id="status-led" aria-label="status"></span>
+    </header>
+
+    <section class="widgets" aria-label="holo-widgets">
+      <div class="card">
+        <div class="card-title">CPU LOAD</div>
+        <div class="card-value" id="stat-cpu">37%</div>
+      </div>
+      <div class="card">
+        <div class="card-title">PKTS/sec</div>
+        <div class="card-value" id="stat-pkts">1,204</div>
+      </div>
+      <div class="card">
+        <div class="card-title">ENTROPY</div>
+        <div class="card-value" id="stat-entropy">7.1e3</div>
+      </div>
+      <div class="card">
+        <div class="card-title">NODES</div>
+        <div class="card-value" id="stat-nodes">256</div>
+      </div>
+    </section>
+
+    <section class="terminal" aria-label="terminal">
+      <div id="terminal-output" class="output" aria-live="polite"></div>
+      <div class="prompt-row">
+        <span class="prompt">guest@node:~$</span>
+        <input id="terminal-input" type="text" autocapitalize="off" autocomplete="off" spellcheck="false" aria-label="terminal input" placeholder="ketik 'help' lalu Enter" />
+      </div>
+      <div class="controls">
+        <button id="btn-scan" class="btn">Run Scan</button>
+        <button id="btn-decrypt" class="btn">Decrypt</button>
+        <button id="btn-clear" class="btn btn-ghost">Clear</button>
+      </div>
+      <div class="progress hidden" id="progress" aria-hidden="true">
+        <div class="bar" id="progress-bar"></div>
+        <span class="label" id="progress-label">0%</span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Commands: help, scan, decrypt, clear, whoami, trace, banner
+    </footer>
+  </div>
+
+  <div class="overlay overlay-scanlines"></div>
+  <div class="overlay overlay-vignette"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

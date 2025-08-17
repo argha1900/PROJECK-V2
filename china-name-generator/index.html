@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>China Name Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <div class="logo">漢</div>
+        <div class="titles">
+          <h1>China Name Generator</h1>
+          <p class="tag">Buat nama bergaya Tionghoa: marga, nama, pinyin, alias.</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="panel controls" aria-label="generator">
+        <label class="field">
+          <span>Nama asli</span>
+          <input id="input-name" type="text" placeholder="mis. Argha" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span>Gaya</span>
+          <select id="select-style">
+            <option value="neutral">Netral</option>
+            <option value="masculine">Maskulin</option>
+            <option value="feminine">Feminim</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button id="btn-generate" class="btn primary">Generate</button>
+          <button id="btn-random" class="btn">Random</button>
+        </div>
+        <p class="hint">Contoh: masukkan "Argha" lalu klik Generate.</p>
+      </section>
+
+      <section class="panel result" aria-label="hasil">
+        <div class="result-cn" id="result-cn">——</div>
+        <div class="result-sub">
+          <div class="sub-item">
+            <div class="label">Pinyin</div>
+            <div class="value" id="result-pinyin">——</div>
+            <button class="btn ghost small" id="btn-copy-pinyin">Salin</button>
+          </div>
+          <div class="sub-item">
+            <div class="label">Alias (gaya "Leo Jhing")</div>
+            <div class="value" id="result-alias">——</div>
+            <button class="btn ghost small" id="btn-copy-alias">Salin</button>
+          </div>
+        </div>
+        <div class="meaning" id="result-meaning">Arti: ——</div>
+        <div class="names-detail" id="result-detail"></div>
+        <div class="copy-row">
+          <button class="btn" id="btn-copy-cn">Salin Nama 汉字</button>
+        </div>
+        <p class="disclaimer">Hasil ini bersifat hiburan. Untuk nama resmi, konsultasikan dengan penutur asli/ahli onomastik.</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Tip: Anda dapat memilih gaya Netral/Maskulin/Feminim.</span>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Tersalin</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
