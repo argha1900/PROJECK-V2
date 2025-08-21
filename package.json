@@ -1,0 +1,41 @@
+{
+  "name": "aplikasi-cek-transportasi",
+  "version": "1.0.0",
+  "description": "Aplikasi web untuk mengecek rute transportasi yang terhubung dengan Google Maps API",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "transportasi",
+    "google-maps",
+    "routing",
+    "indonesia",
+    "public-transport",
+    "directions",
+    "maps"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/aplikasi-cek-transportasi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/aplikasi-cek-transportasi/issues"
+  },
+  "homepage": "https://github.com/yourusername/aplikasi-cek-transportasi#readme",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
