@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHAA TRANS - Cek Transportasi (HTML Only)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 32px 28px; text-align: center; }
+        .header h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: 0.5px; }
+        .header p { opacity: 0.95; margin-top: 6px; }
+        .content { padding: 28px; background: #f8f9fa; }
+        .card { background: #fff; border-radius: 16px; padding: 22px; border: 1px solid #eef1f5; box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
+        .card h2 { font-size: 1.2rem; margin-bottom: 14px; color: #333; }
+        .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 6px; }
+        .form .full { grid-column: 1 / -1; }
+        label { display: block; font-weight: 700; font-size: 0.9rem; color: #374151; margin-bottom: 8px; }
+        input, select { width: 100%; padding: 14px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; transition: border-color .2s, box-shadow .2s; background: #fff; color: #111827; }
+        input::placeholder { color: #9ca3af; }
+        input:focus, select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+        .actions { display: flex; gap: 12px; margin-top: 8px; }
+        .btn { appearance: none; border: none; border-radius: 10px; padding: 14px 18px; font-weight: 800; cursor: pointer; transition: transform .15s ease, box-shadow .2s ease; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; box-shadow: 0 10px 20px rgba(102,126,234,0.25); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(102,126,234,0.35); }
+        .btn-secondary { background: #eef2ff; color: #4f46e5; border: 2px solid #c7d2fe; }
+        .notice { margin-top: 18px; font-size: 0.9rem; color: #4b5563; background: #f1f5f9; border-left: 4px solid #667eea; padding: 12px 14px; border-radius: 8px; }
+        .footer { text-align: center; color: #9aa3b2; font-size: 0.9rem; padding: 20px; }
+        .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; }
+        .brand-badge { display: inline-block; background: #fff; color: #5b21b6; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; margin-left: 8px; }
+        @media (max-width: 780px) { .form { grid-template-columns: 1fr; } .header h1 { font-size: 1.8rem; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">
+                <span style="font-size:1.6rem">🚗</span>
+                <h1>GHAA TRANS</h1>
+                <span class="brand-badge">HTML Only</span>
+            </div>
+            <p>Cek transportasi dan buka rute langsung di Google Maps</p>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2>Form Pencarian Rute</h2>
+                <!-- HTML-only: submit langsung ke Google Maps Directions (tanpa JavaScript) -->
+                <form class="form" action="https://www.google.com/maps/dir/" method="get" target="_blank">
+                    <input type="hidden" name="api" value="1">
+
+                    <div class="full">
+                        <label for="origin">📍 Asal</label>
+                        <input id="origin" name="origin" type="text" placeholder="Contoh: Monas, Jakarta" required>
+                    </div>
+
+                    <div class="full">
+                        <label for="destination">🎯 Tujuan</label>
+                        <input id="destination" name="destination" type="text" placeholder="Contoh: Mall Taman Anggrek, Jakarta" required>
+                    </div>
+
+                    <div>
+                        <label for="travelmode">🚌 Mode Transportasi</label>
+                        <select id="travelmode" name="travelmode">
+                            <option value="transit">Transit (Bus/MRT/KRL)</option>
+                            <option value="driving">Mobil</option>
+                            <option value="walking">Jalan Kaki</option>
+                            <option value="bicycling">Sepeda</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="dirflg">⚙️ Preferensi (opsional)</label>
+                        <select id="dirflg" name="dirflg">
+                            <option value="">Default</option>
+                            <option value="h">Tolak Jalan Tol</option>
+                            <option value="t">Hindari Feri</option>
+                        </select>
+                    </div>
+
+                    <div class="full actions">
+                        <button class="btn btn-primary" type="submit">🔍 Cari dan Buka di Google Maps</button>
+                        <button class="btn btn-secondary" type="reset">↺ Reset</button>
+                    </div>
+                </form>
+
+                <div class="notice">
+                    • Form ini akan membuka tab baru Google Maps dengan rute sesuai input Anda. <br>
+                    • Tidak ada JavaScript, semua murni HTML.
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">© GHAA TRANS • Rute cepat dan mudah, langsung di Google Maps</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GHAA TRANS - Demo Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .demo-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ffeaa7;
+        }
+
+        .search-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .map-section {
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .map-placeholder {
+            padding: 20px;
+        }
+
+        .results-section {
+            padding: 30px;
+        }
+
+        .route-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .route-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .route-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .detail-item h4 {
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .transport-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .transport-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .transport-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .transport-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .transport-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .transport-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #c33;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .route-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 GHAA TRANS</h1>
+            <p>Cek Transportasi & Rute Terbaik</p>
+        </div>
+
+        <div class="demo-notice">
+            <strong>DEMO VERSION</strong> - Ini adalah versi demo tanpa Google Maps API. Untuk versi lengkap, gunakan file index.html dengan API key.
+        </div>
+
+        <div class="search-section">
+            <form class="search-form" id="routeForm">
+                <div class="form-group">
+                    <label for="origin">📍 Asal</label>
+                    <input type="text" id="origin" placeholder="Masukkan lokasi asal" required>
+                </div>
+                <div class="form-group">
+                    <label for="destination">🎯 Tujuan</label>
+                    <input type="text" id="destination" placeholder="Masukkan lokasi tujuan" required>
+                </div>
+                <div class="form-group">
+                    <label for="transportMode">🚌 Mode Transportasi</label>
+                    <select id="transportMode">
+                        <option value="transit">Transit (Bus/MRT)</option>
+                        <option value="driving">Mobil</option>
+                        <option value="walking">Jalan Kaki</option>
+                        <option value="bicycling">Sepeda</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-btn">🔍 Cari Rute</button>
+            </form>
+        </div>
+
+        <div class="map-section">
+            <div class="map-placeholder">
+                <h3>🗺️ Peta Interaktif</h3>
+                <p>Dalam versi lengkap, peta Google Maps akan ditampilkan di sini</p>
+                <p>📍 Lokasi: Jakarta, Indonesia</p>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <div class="route-info">
+                <h3>📊 Informasi Rute</h3>
+                <div class="route-details" id="routeDetails">
+                    <!-- Route details will be populated here -->
+                </div>
+            </div>
+
+            <div class="transport-options" id="transportOptions">
+                <!-- Transport options will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo data for testing
+        const demoRoutes = {
+            'transit': [
+                {
+                    duration: '45 menit',
+                    distance: '12.5 km',
+                    cost: 'Rp 9.750',
+                    summary: 'MRT - Bus - Jalan Kaki'
+                },
+                {
+                    duration: '52 menit',
+                    distance: '13.2 km',
+                    cost: 'Rp 10.100',
+                    summary: 'KRL - Bus - Jalan Kaki'
+                },
+                {
+                    duration: '38 menit',
+                    distance: '11.8 km',
+                    cost: 'Rp 9.400',
+                    summary: 'Bus - MRT - Jalan Kaki'
+                }
+            ],
+            'driving': [
+                {
+                    duration: '25 menit',
+                    distance: '12.5 km',
+                    cost: 'Rp 25.000',
+                    summary: 'Jalan Tol - Jalan Raya'
+                },
+                {
+                    duration: '32 menit',
+                    distance: '13.2 km',
+                    cost: 'Rp 26.400',
+                    summary: 'Jalan Raya - Jalan Tol'
+                },
+                {
+                    duration: '28 menit',
+                    distance: '11.8 km',
+                    cost: 'Rp 23.600',
+                    summary: 'Jalan Raya - Jalan Raya'
+                }
+            ],
+            'walking': [
+                {
+                    duration: '2 jam 35 menit',
+                    distance: '12.5 km',
+                    cost: 'Gratis',
+                    summary: 'Jalan Kaki - Trotoar'
+                }
+            ],
+            'bicycling': [
+                {
+                    duration: '45 menit',
+                    distance: '12.5 km',
+                    cost: 'Gratis',
+                    summary: 'Jalur Sepeda - Jalan Raya'
+                },
+                {
+                    duration: '52 menit',
+                    distance: '13.2 km',
+                    cost: 'Gratis',
+                    summary: 'Jalur Sepeda - Trotoar'
+                }
+            ]
+        };
+
+        function calculateRoute() {
+            const origin = document.getElementById("origin").value;
+            const destination = document.getElementById("destination").value;
+            const mode = document.getElementById("transportMode").value;
+
+            if (!origin || !destination) {
+                showError("Mohon isi lokasi asal dan tujuan");
+                return;
+            }
+
+            showLoading();
+
+            // Simulate API delay
+            setTimeout(() => {
+                displayDemoResults(mode);
+                document.getElementById("resultsSection").style.display = "block";
+            }, 1500);
+        }
+
+        function displayDemoResults(mode) {
+            const routes = demoRoutes[mode] || demoRoutes['transit'];
+            
+            // Display route info
+            const routeDetails = document.getElementById("routeDetails");
+            const bestRoute = routes[0];
+            
+            routeDetails.innerHTML = `
+                <div class="detail-item">
+                    <h4>⏱️ Durasi</h4>
+                    <p>${bestRoute.duration}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>📏 Jarak</h4>
+                    <p>${bestRoute.distance}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>🚀 Rute Tercepat</h4>
+                    <p>${bestRoute.summary}</p>
+                </div>
+                <div class="detail-item">
+                    <h4>💰 Estimasi Biaya</h4>
+                    <p>${bestRoute.cost}</p>
+                </div>
+            `;
+
+            // Display transport options
+            const transportOptions = document.getElementById("transportOptions");
+            transportOptions.innerHTML = routes.map((route, index) => {
+                return `
+                    <div class="transport-card">
+                        <div class="transport-icon">${getTransportIcon(mode)}</div>
+                        <h4>Opsi ${index + 1}</h4>
+                        <div class="transport-stats">
+                            <div class="stat">
+                                <div class="stat-value">${route.duration}</div>
+                                <div class="stat-label">Durasi</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${route.distance}</div>
+                                <div class="stat-label">Jarak</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${route.cost}</div>
+                                <div class="stat-label">Biaya</div>
+                            </div>
+                        </div>
+                        <p><strong>Rute:</strong> ${route.summary}</p>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function getTransportIcon(mode) {
+            const icons = {
+                'transit': '🚌',
+                'driving': '🚗',
+                'walking': '🚶',
+                'bicycling': '🚲'
+            };
+            return icons[mode] || '🚌';
+        }
+
+        function showLoading() {
+            const resultsSection = document.getElementById("resultsSection");
+            resultsSection.style.display = "block";
+            resultsSection.innerHTML = '<div class="loading">🔄 Mencari rute terbaik...</div>';
+        }
+
+        function showError(message) {
+            const resultsSection = document.getElementById("resultsSection");
+            resultsSection.style.display = "block";
+            resultsSection.innerHTML = `<div class="error">❌ ${message}</div>`;
+        }
+
+        // Event listeners
+        document.getElementById("routeForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            calculateRoute();
+        });
+
+        // Pre-fill demo data
+        document.getElementById("origin").value = "Monas, Jakarta";
+        document.getElementById("destination").value = "Mall Taman Anggrek, Jakarta";
+    </script>
+</body>
+</html>
