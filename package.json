@@ -1,0 +1,41 @@
+{
+  "name": "ghaa-trans",
+  "version": "1.0.0",
+  "description": "Aplikasi cek transportasi dengan integrasi Google Maps API",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "transportation",
+    "google-maps",
+    "routing",
+    "indonesia",
+    "public-transport",
+    "web-app"
+  ],
+  "author": "GHAA TRANS Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ghaa-trans.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/ghaa-trans/issues"
+  },
+  "homepage": "https://github.com/yourusername/ghaa-trans#readme",
+  "dependencies": {
+    "google-maps": "^3.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
